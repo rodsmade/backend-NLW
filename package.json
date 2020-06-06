@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "batata": "ts-node-dev src/servidor.ts",
-    "knex:migra!": "knex migrate:latest --knexfile knexfile.ts migrate:latest"
+    "batata": "ts-node-dev --ignore-watch node_modules src/servidor.ts",
+    "knex:migra!": "knex --knexfile knexfile.ts migrate:latest",
+    "knex:semeia!": "knex --knexfile knexfile.ts seed:run"
   },
   "keywords": [],
   "author": "",

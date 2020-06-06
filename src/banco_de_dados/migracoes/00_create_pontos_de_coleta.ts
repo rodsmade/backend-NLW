@@ -13,7 +13,7 @@ export async function up(knex : Knex) {
         minhaTabela.decimal('latitude').notNullable;
         minhaTabela.decimal('longitude').notNullable;
         minhaTabela.string('rua').notNullable();
-        minhaTabela.string('número').notNullable();
+        minhaTabela.string('numero').notNullable();
         minhaTabela.string('cidade').notNullable();
         minhaTabela.string('unidade_federativa', 2).notNullable();
 

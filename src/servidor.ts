@@ -1,4 +1,5 @@
 import express, { response } from 'express';
+import path from 'path'
 import rotas from './rotas'
 // esse comando de import vai no caminho que passei (./rotas = msm diretório, arquivo "rotas.ts")
 //      e importa aquilo que declarei como export no rotas.ts. se tirar o comando export, o import aqui para de funcionar.
@@ -7,6 +8,9 @@ const app = express();
 app.listen(3333);
 app.use(express.json());
 app.use(rotas);
+app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')))
+    // crio a rota "uploads" que recebe GETs apenas, e disponibiliza documentos gerais/genéricos para
+    //      quem for consumir esta API, no caso, o Front-End, mas qqr pessoa esperta q tente acessar a rota tb.
 
 // // configura que minha aplicação passa a escutar (receber) as requisições
 // // que forem enviadas para a porta 3333 do localhost (este computador):
