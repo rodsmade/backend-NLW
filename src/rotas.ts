@@ -11,7 +11,7 @@ const pontoDeColetaController = new PontoDeColetaController();
 const itemDeColetaController = new ItemDeColetaController();
 
 /*  existe esse padrão anglicizado de nomear os métodos:
-        index   :   listarTodos
+        index   :   listarTodos // pesquisar
         show    :   exibir (um único registro)
         create  :   adicionarNovo
         update  :   atualizar (um único registro)
@@ -24,6 +24,8 @@ minhasRotas.get('/itens', itemDeColetaController.listarTodosItens);
 //      então aqui eu só chamo a assinatura do método mesmo.
 
 minhasRotas.get('/pontos/:id', pontoDeColetaController.exibirPontoDeColeta);
+
+minhasRotas.get('/pontos', pontoDeColetaController.pesquisarPontoDeColeta);
 
 //  V---------------- ROTAS DO MÉTODO POST ----------------V 
 minhasRotas.post('/pontos', pontoDeColetaController.adicionarNovoPonto);

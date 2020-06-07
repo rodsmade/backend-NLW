@@ -2,23 +2,42 @@ import {Request, Response} from 'express'
 import connknex from '../banco_de_dados/conexao'
 
 class PontoDeColetaController {
+    
+    async pesquisarPontoDeColeta(request: Request, response: Response){
+        const {cidade, unidade_federativa, itens } = request.query;
+        
+        const parsedItems = String(itens)
+            .split(',')
+            .map(i => Number(i.trim()));
 
+        const points = await connknex('pontos_de_coleta')
+            .join('itens_por_pontos', 'pontos_de_coleta.id', '=', 'itens_por_pontos.id_ponto')
+            .whereIn('itens_por_pontos.id_item', parsedItems)
+            .where('cidade', String(cidade))
+            .where('unidade_federativa', String(unidade_federativa))
+            .distinct()
+            .select('pontos_de_coleta.*');
+
+        return response.json(points);
+
+    };
+    
     async exibirPontoDeColeta(request: Request, response: Response){
         const { id } = request.params; // desestruturação, o mesmo que: const id = request.params.id;
         const pontoBuscado = await connknex('pontos_de_coleta').where('id', id).first(); 
-
+        
         if(!pontoBuscado){
             return response.status(400).json({mensagem : 'Ponto não encontrado'});
         }
-
+        
         const itensDoPonto = await connknex('itens_de_coleta')
-            .join('itens_por_pontos', 'itens_de_coleta.id', '=', 'itens_por_pontos.id_item')
+        .join('itens_por_pontos', 'itens_de_coleta.id', '=', 'itens_por_pontos.id_item')
             .where('itens_por_pontos.id_ponto', id)
             .select('itens_de_coleta.titulo')
-
-        return response.json({pontoBuscado, itensDoPonto});
-    }
-
+            
+            return response.json({pontoBuscado, itensDoPonto});
+        }
+        
     async adicionarNovoPonto(request: Request,response: Response) {
         const {
             nome,
