@@ -1,10 +1,14 @@
 import express, { response } from 'express';
+import cors from 'cors';
 import path from 'path'
 import rotas from './rotas'
 // esse comando de import vai no caminho que passei (./rotas = msm diretório, arquivo "rotas.ts")
 //      e importa aquilo que declarei como export no rotas.ts. se tirar o comando export, o import aqui para de funcionar.
 
 const app = express();
+
+app.use(cors()); // desse jeito permite que toda e qqr URL acesse nossa API, em prod (mais pra frente) vamo configurar
+                 //     pra que somente nossa aplicação do front (em des: localhost:3000, react native etc.) acesse.
 app.listen(3333);
 app.use(express.json());
 app.use(rotas);
