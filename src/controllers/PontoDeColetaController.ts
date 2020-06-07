@@ -2,6 +2,23 @@ import {Request, Response} from 'express'
 import connknex from '../banco_de_dados/conexao'
 
 class PontoDeColetaController {
+
+    async exibirPontoDeColeta(request: Request, response: Response){
+        const { id } = request.params; // desestruturação, o mesmo que: const id = request.params.id;
+        const pontoBuscado = await connknex('pontos_de_coleta').where('id', id).first(); 
+
+        if(!pontoBuscado){
+            return response.status(400).json({mensagem : 'Ponto não encontrado'});
+        }
+
+        const itensDoPonto = await connknex('itens_de_coleta')
+            .join('itens_por_pontos', 'itens_de_coleta.id', '=', 'itens_por_pontos.id_item')
+            .where('itens_por_pontos.id_ponto', id)
+            .select('itens_de_coleta.titulo')
+
+        return response.json({pontoBuscado, itensDoPonto});
+    }
+
     async adicionarNovoPonto(request: Request,response: Response) {
         const {
             nome,
@@ -60,6 +77,8 @@ class PontoDeColetaController {
         
         // adicionar a relação n:n na tabela intermediária itens_por_pontos:
         await trx('itens_por_pontos').insert(itensPorPonto)
+
+        await trx.commit();
     
         return response.json({
             id : id_ponto,
@@ -71,6 +90,7 @@ class PontoDeColetaController {
         //      enviada no pedido de criação de novo ponto (endereço, email, etc.)
     
     }
+
  };
 
  export default PontoDeColetaController;

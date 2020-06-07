@@ -19,7 +19,7 @@ app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')))
 // // configura o express pra entender o corpo das requisições como formato JSON:
 // app.use(express.json());
 
-// // PROTÓTIPO DO Q VAI SER UM BA NCO DE DADOS:
+// // PROTÓTIPO DO Q VAI SER UM BANCO DE DADOS:
 // const usuaries = [
 //     'Luma',
 //     'Rogerio',
