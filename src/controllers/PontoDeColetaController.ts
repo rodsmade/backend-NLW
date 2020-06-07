@@ -18,7 +18,14 @@ class PontoDeColetaController {
             .distinct()
             .select('pontos_de_coleta.*');
 
-        return response.json(points);
+        const pontosSerializados = points.map(ponto => {    // serializado = iteradamente alterado/construído
+            return {
+                ...ponto,
+                url_imagem: `http://localhost:3333/uploads/${ponto.imagem}`,
+            };
+        });
+
+        return response.json(pontosSerializados);
 
     };
     
@@ -30,12 +37,17 @@ class PontoDeColetaController {
             return response.status(400).json({mensagem : 'Ponto não encontrado'});
         }
         
+        const pontoSerializado = {
+                ...pontoBuscado,
+                url_imagem: `http://localhost:3333/uploads/${pontoBuscado.imagem}`,
+            };
+
         const itensDoPonto = await connknex('itens_de_coleta')
         .join('itens_por_pontos', 'itens_de_coleta.id', '=', 'itens_por_pontos.id_item')
             .where('itens_por_pontos.id_ponto', id)
             .select('itens_de_coleta.titulo')
             
-            return response.json({pontoBuscado, itensDoPonto});
+            return response.json({pontoSerializado, itensDoPonto});
         }
         
     async adicionarNovoPonto(request: Request,response: Response) {
@@ -59,7 +71,7 @@ class PontoDeColetaController {
         //      isto é, criando uma variável pra receber cada parte do body.
     
         const novoPontoDeColeta = { // estou criando o objeto (inclui imagem, que no momento NÃO VEM na requisição)
-            imagem: "dummy",
+            imagem: request.file.filename,
             nome,
             email,
             nagazap,
@@ -85,7 +97,10 @@ class PontoDeColetaController {
         // idDoPontoCriado é um array de retorno do método insert() com os ids de tds os registros criados
         
         const id_ponto = idDoPontoCriado[0];    
-        const itensPorPonto = itens.map((id_item: number) => {
+        const itensPorPonto = itens
+                                .split(',')
+                                .map((i: string) => Number(i.trim()))
+                                .map((id_item: number) => {
             return {
                 id_item,
                 id_ponto,
