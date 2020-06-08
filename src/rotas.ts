@@ -3,6 +3,8 @@ import PontoDeColetaController from './controllers/PontoDeColetaController';
 import ItemDeColetaController from './controllers/ItemDeColetaController';
 import multer from 'multer';
 import multerConfig from './config/multer';
+import { celebrate, Joi } from 'celebrate';
+
 
 // o .Router() permite desacoplar os arquivos do servidor e de rotas, e agora 'rotas' aqui dentro serve como o 'app.§ 
 //      no servidor.ts. Ao final, exporto minhas rotas para poder ter acesso dentro do servidor.ts
@@ -32,6 +34,23 @@ minhasRotas.get('/pontos/:id', pontoDeColetaController.exibirPontoDeColeta);
 minhasRotas.get('/pontos', pontoDeColetaController.pesquisarPontoDeColeta);
 
 //  V---------------- ROTAS DO MÉTODO POST ----------------V 
-minhasRotas.post('/pontos', upload.single('imagem'), pontoDeColetaController.adicionarNovoPonto);
+minhasRotas.post(
+        '/pontos', 
+        upload.single('imagem'),
+        celebrate({
+                body: Joi.object().keys({
+                        nome: Joi.string().required(),
+                        email: Joi.string().required().email(),
+                        nagazap: Joi.number().required(),
+                        latitude: Joi.number().required(),
+                        longitude: Joi.number().required(),
+                        cidade: Joi.string().required(),
+                        unidade_federativa: Joi.string().required().max(2),
+                        itens: Joi.string().required(),
+                })
+        }, {
+                abortEarly: false, // pra retornar todos os erros, não apenas o primeiro q encontrar
+        }), 
+        pontoDeColetaController.adicionarNovoPonto);
 
 export default minhasRotas;
